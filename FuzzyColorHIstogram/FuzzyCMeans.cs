@@ -11,14 +11,26 @@ namespace FuzzyColorHIstogram
         private double weight_exponetM;
         private double ERROE_TOLERANCE;
         private int cluster_num;
+        private int input_dimension;
 
-        private int[] datas;
-        private double[] cluster;
-        private double[,] matrix_u;
+        private List<int[]> datas;
+        public List<double[]> cluster
+        {
+            get;
+            private set;
+        }
 
-        public FuzzyCMeans(int[] dts, double weight, double tolerance, int num)
+        public double[,] matrix_u
+        {
+            get;
+            private set;
+        }
+
+        public FuzzyCMeans(List<int[]> dts, double weight, double tolerance, int num)
         {
             datas = dts;
+            input_dimension = datas[0].Length;
+
             weight_exponetM = weight;
             cluster_num = num;
             ERROE_TOLERANCE = tolerance;
@@ -26,35 +38,109 @@ namespace FuzzyColorHIstogram
 
         private double[,] InitializeMatrix()
         {
-            double[,] matrix_u = new double[datas.Length, cluster_num];
+            double[,] matrix_u = new double[datas.Count, cluster_num];
 
-            int cluster_sum = 0;
-            for (int c = 1; c <= cluster_num; c++)
+            Random rd = new Random();
+                            
+            for (int x = 0; x < datas.Count; x++)
             {
-                cluster_sum += c;
-            }
-
-            for (int x = 0; x < datas.Length; x++)
-            {
+                double maximum = 1;
+                double minimum = 0;
                 for (int c = 0; c < cluster_num; c++)
                 {
-                    matrix_u[x, c] = (double)(c + 1) / (double)cluster_sum;
+                    if(c == cluster_num -1)
+                    {
+                        matrix_u[x, c] = maximum;
+                    }
+                    else
+                    {
+                        matrix_u[x, c] = rd.NextDouble() * (maximum - minimum) + minimum;
+                        maximum -= matrix_u[x, c];
+                    }
                 }
             }
 
             return matrix_u;
         }
 
-        private double diffVectorNorm(double x, double c)
+        private void reset(ref double[] data)
         {
-            return Math.Abs(x - c);
+            for (int i = 0; i < data.Length; i++)
+            {
+                data[i] = 0;
+            }
+        }
+
+        private double[] mul(double p, int[] data)
+        {
+            double[] ret = new double[data.Length];
+            for (int i = 0; i < data.Length; i++) 
+            {
+                ret[i] = p * data[i];
+            }
+
+            return ret;
+        }
+
+        private double[] plus(double[] l, double[] r)
+        {
+            int count = l.Length < r.Length ? l.Length : r.Length;
+
+            double[] ret = new double[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = l[i] + r[i];
+            }
+
+            return ret;
+        }
+
+        private double[] plus(double[] l, double r)
+        {
+            int count = l.Length;
+
+            double[] ret = new double[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = l[i] + r;
+            }
+
+            return ret;
+        }
+
+        private double[] divid(double[] n, double[] d)
+        {
+            int count = n.Length < d.Length ? n.Length : d.Length;
+
+            double[] ret = new double[count];
+
+            for (int i = 0; i < count; i++)
+            {
+                ret[i] = n[i] / d[i];
+            }
+
+            return ret;
+        }
+
+        private double diffVectorNorm(int[] x, double[] c)
+        {
+            int count = x.Length < c.Length ? x.Length : c.Length;
+            double sum = 0;
+            for (int i = 0; i < count;i++ )
+            {
+                sum += Math.Pow(x[i] - c[i], 2);
+            }
+
+            return Math.Pow(sum, 0.5);
         }
 
         private double diffMatrixNorm(double[,] pre, double[,] cur)
         {
             double sum = 0;
 
-            for (int x = 0; x < datas.Length; x++)
+            for (int x = 0; x < datas.Count; x++)
             {
                 for (int c = 0; c < cluster_num; c++)
                 {
@@ -63,38 +149,41 @@ namespace FuzzyColorHIstogram
                 }
             }
 
-            return Math.Pow(sum, 1 / 2);
+            return Math.Pow(sum, 0.5);
         }
 
-        private double[] updateCluster(double[,] matrix_u)
+        private List<double[]> updateCluster(double[,] matrix_u)
         {
-            double[] cluster = new double[cluster_num];
+            List<double[]> cluster = new List<double[]>(cluster_num);
 
             for (int c = 0; c < cluster_num; c++)
             {
-                double sum_numerator = 0;
-                for (int x = 0; x < datas.Length; x++)
+                double[] sum_numerator = new double[input_dimension];
+                reset(ref sum_numerator);
+                for (int x = 0; x < datas.Count; x++)
                 {
-                    sum_numerator += Math.Pow(matrix_u[x, c], weight_exponetM) * datas[x];
+
+                    sum_numerator = plus(sum_numerator, mul(Math.Pow(matrix_u[x, c], weight_exponetM), datas[x]));
                 }
 
-                double sum_denominator = 0;
-                for (int x = 0; x < datas.Length; x++)
+                double[] sum_denominator = new double[input_dimension];
+                reset(ref sum_denominator);
+                for (int x = 0; x < datas.Count; x++)
                 {
-                    sum_denominator += Math.Pow(matrix_u[x, c], weight_exponetM);
+                    sum_denominator = plus(sum_denominator, Math.Pow(matrix_u[x, c], weight_exponetM));
                 }
 
-                cluster[c] = sum_numerator / sum_denominator;
+                cluster.Add(divid(sum_numerator , sum_denominator));
             }
 
             return cluster;
         }
 
-        private double[,] updateMatrix(double[] cluster)
+        private double[,] updateMatrix(List<double[]> cluster)
         {
-            double[,] matrix_u = new double[datas.Length, cluster_num];
+            double[,] matrix_u = new double[datas.Count, cluster_num];
 
-            for (int x = 0; x < datas.Length; x++)
+            for (int x = 0; x < datas.Count; x++)
             {
                 for (int c = 0; c < cluster_num; c++)
                 {
@@ -116,7 +205,7 @@ namespace FuzzyColorHIstogram
 
         private void fcmIter(double[,] preMatrix)
         {
-            double[] curCluster = updateCluster(preMatrix);
+            List<double[]> curCluster = updateCluster(preMatrix);
             double[,] curMatrix = updateMatrix(curCluster);
 
             double diff = diffMatrixNorm(preMatrix, curMatrix);
