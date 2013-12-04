@@ -4,10 +4,16 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FuzzyColorHIstogram
+namespace FCH
 {
     public class Range<T> where T : IComparable<T>
     {
+        public Range(T min, T max)
+        {
+            Minimum = min;
+            Maximum = max;
+        }
+
         /// <summary>
         /// Minimum value of the range
         /// </summary>

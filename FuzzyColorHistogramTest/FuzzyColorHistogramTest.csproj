@@ -66,6 +66,7 @@
   <ItemGroup>
     <Compile Include="ColorHistogramTest.cs" />
     <Compile Include="FcmTest.cs" />
+    <Compile Include="FcmVecotrTest.cs" />
     <Compile Include="FuzzyColorHistogramTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

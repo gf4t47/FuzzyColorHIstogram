@@ -1,92 +1,88 @@
 ﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FuzzyColorHIstogram;
+using System.Text;
 using System.Collections.Generic;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using FCH;
 
 namespace FuzzyColorHistogramTest
 {
+    /// <summary>
+    /// Summary description for FcmTest
+    /// </summary>
     [TestClass]
     public class FcmTest
     {
-        [TestMethod]
-        public void TestFcmArray1()
+        public FcmTest()
         {
-            List<int[]> datas = new List<int[]>() { new int[] { 2 }, new int[] { 3 }, new int[] { 4 }, new int[] { 5 }, 
-                                                    new int[]{ 23 }, new int[]{ 24 }, new int[]{ 25 }, new int[]{ 26 }, 
-                                                    new int[]{ 55 }, new int[]{ 56 }, new int[]{ 57 }, new int[]{ 58 } };
-            FuzzyCMeans fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
-
-            fcm.runFCM();
-
-            List<double[]> cluster = fcm.cluster;
-            double[,] matrix = fcm.matrix_u;
-
-            Assert.AreEqual(3, cluster.Count);
-            Assert.AreEqual(datas.Count, matrix.Length / cluster.Count);
+            //
+            // TODO: Add constructor logic here
+            //
         }
 
-        [TestMethod]
-        public void TestFcmArray2()
+        private TestContext testContextInstance;
+
+        /// <summary>
+        ///Gets or sets the test context which provides
+        ///information about and functionality for the current test run.
+        ///</summary>
+        public TestContext TestContext
         {
-            List<int[]> datas = new List<int[]>() { new int[] { 2,2 }, new int[] { 3,3 }, new int[] { 4,4 }, new int[] { 5,5 }, 
-                                                    new int[]{ 23,23 }, new int[]{ 24,24 }, new int[]{ 25,25 }, new int[]{ 26,26 }, 
-                                                    new int[]{ 55,55 }, new int[]{ 56,56 }, new int[]{ 57,57 }, new int[]{ 58,58 } };
-            FuzzyCMeans fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
-
-            fcm.runFCM();
-
-            List<double[]> cluster = fcm.cluster;
-            double[,] matrix = fcm.matrix_u;
-
-            Assert.AreEqual(3, cluster.Count);
-            Assert.AreEqual(datas.Count, matrix.Length / cluster.Count);
+            get
+            {
+                return testContextInstance;
+            }
+            set
+            {
+                testContextInstance = value;
+            }
         }
 
+        #region Additional test attributes
+        //
+        // You can use the following additional attributes as you write your tests:
+        //
+        // Use ClassInitialize to run code before running the first test in the class
+        // [ClassInitialize()]
+        // public static void MyClassInitialize(TestContext testContext) { }
+        //
+        // Use ClassCleanup to run code after all tests in a class have run
+        // [ClassCleanup()]
+        // public static void MyClassCleanup() { }
+        //
+        // Use TestInitialize to run code before running each test 
+        // [TestInitialize()]
+        // public void MyTestInitialize() { }
+        //
+        // Use TestCleanup to run code after each test has run
+        // [TestCleanup()]
+        // public void MyTestCleanup() { }
+        //
+        #endregion
+
         [TestMethod]
-        public void TestFcmArray3()
+        public void TestFcmColorBins()
         {
-            List<int[]> datas = new List<int[]>() { new int[] { 2,2,2 }, new int[] { 3,3,3 }, new int[] { 4,4,4 }, new int[] { 5,5,5 }, 
-                                                    new int[]{ 23,23,23 }, new int[]{ 24,24,24 }, new int[]{ 25,25,25 }, new int[]{ 26,26,26 }, 
-                                                    new int[]{ 55,55,55 }, new int[]{ 56,56,56 }, new int[]{ 57,57,57 }, new int[]{ 58,58,58 } };
+            int bins = 16;
+            int tick = 256 / 16;
+            int dimension = 3;
+
+            List<ColorBins> datas = new List<ColorBins>(bins);
+            for (int i = 0; i < bins; i++)
+            {
+                List<Range<Byte>> ranges = new List<Range<Byte>>(dimension);
+                for (int j = 0; j < 3; j++)
+                {
+                    ranges.Add(new Range<Byte>((Byte)(i * tick), (Byte)((i + 1) * tick - 1)));
+                }
+
+                datas.Add(new ColorBins(ranges));
+            }
+
             FuzzyCMeans fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
 
             fcm.runFCM();
 
-            List<double[]> cluster = fcm.cluster;
-            double[,] matrix = fcm.matrix_u;
-
-            Assert.AreEqual(3, cluster.Count);
-            Assert.AreEqual(datas.Count, matrix.Length / cluster.Count);
-        }
-
-        [TestMethod]
-        public void TestFcmArray3_1()
-        {
-            List<int[]> datas = new List<int[]>() { new int[] { 2,23,55 }, new int[] { 3,24,56 }, new int[] { 4,25,57 }, new int[] { 5,26,58 }, 
-                                                    new int[]{ 23,55,2 }, new int[]{ 24,56,3 }, new int[]{ 25,57,4 }, new int[]{ 26,58,5 }, 
-                                                    new int[]{ 55,2,23 }, new int[]{ 56,3,24 }, new int[]{ 57,4,25 }, new int[]{ 58,5,26 } };
-            FuzzyCMeans fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
-
-            fcm.runFCM();
-
-            List<double[]> cluster = fcm.cluster;
-            double[,] matrix = fcm.matrix_u;
-
-            Assert.AreEqual(3, cluster.Count);
-            Assert.AreEqual(datas.Count, matrix.Length / cluster.Count);
-        }
-
-        [TestMethod]
-        public void TestFcmArray3_2()
-        {
-            List<int[]> datas = new List<int[]>() { new int[] { 2,23,23 }, new int[] { 3,24,56 }, new int[] { 4,25,57 }, new int[] { 15,26,58 }, 
-                                                    new int[]{ 23,55,2 }, new int[]{ 24,56,34 }, new int[]{ 25,57,4 }, new int[]{ 26,58,5 }, 
-                                                    new int[]{ 55,2,23 }, new int[]{ 56,3,24 }, new int[]{ 57,42,25 }, new int[]{ 58,51,26 } };
-            FuzzyCMeans fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
-
-            fcm.runFCM();
-
-            List<double[]> cluster = fcm.cluster;
+            List<CalcBins> cluster = fcm.cluster;
             double[,] matrix = fcm.matrix_u;
 
             Assert.AreEqual(3, cluster.Count);

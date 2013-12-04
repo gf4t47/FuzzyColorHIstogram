@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FuzzyColorHIstogram
+namespace FCH
 {
     public class FuzzyCMeans
     {
@@ -13,8 +13,8 @@ namespace FuzzyColorHIstogram
         private int cluster_num;
         private int input_dimension;
 
-        private List<int[]> datas;
-        public List<double[]> cluster
+        private List<ColorBins> datas;
+        public List<CalcBins> cluster
         {
             get;
             private set;
@@ -26,10 +26,10 @@ namespace FuzzyColorHIstogram
             private set;
         }
 
-        public FuzzyCMeans(List<int[]> dts, double weight, double tolerance, int num)
+        public FuzzyCMeans(List<ColorBins> dts, double weight, double tolerance, int num)
         {
             datas = dts;
-            input_dimension = datas[0].Length;
+            input_dimension = datas[0].Count;
 
             weight_exponetM = weight;
             cluster_num = num;
@@ -63,79 +63,6 @@ namespace FuzzyColorHIstogram
             return matrix_u;
         }
 
-        private void reset(ref double[] data)
-        {
-            for (int i = 0; i < data.Length; i++)
-            {
-                data[i] = 0;
-            }
-        }
-
-        private double[] mul(double p, int[] data)
-        {
-            double[] ret = new double[data.Length];
-            for (int i = 0; i < data.Length; i++) 
-            {
-                ret[i] = p * data[i];
-            }
-
-            return ret;
-        }
-
-        private double[] plus(double[] l, double[] r)
-        {
-            int count = l.Length < r.Length ? l.Length : r.Length;
-
-            double[] ret = new double[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                ret[i] = l[i] + r[i];
-            }
-
-            return ret;
-        }
-
-        private double[] plus(double[] l, double r)
-        {
-            int count = l.Length;
-
-            double[] ret = new double[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                ret[i] = l[i] + r;
-            }
-
-            return ret;
-        }
-
-        private double[] divid(double[] n, double[] d)
-        {
-            int count = n.Length < d.Length ? n.Length : d.Length;
-
-            double[] ret = new double[count];
-
-            for (int i = 0; i < count; i++)
-            {
-                ret[i] = n[i] / d[i];
-            }
-
-            return ret;
-        }
-
-        private double diffVectorNorm(int[] x, double[] c)
-        {
-            int count = x.Length < c.Length ? x.Length : c.Length;
-            double sum = 0;
-            for (int i = 0; i < count;i++ )
-            {
-                sum += Math.Pow(x[i] - c[i], 2);
-            }
-
-            return Math.Pow(sum, 0.5);
-        }
-
         private double diffMatrixNorm(double[,] pre, double[,] cur)
         {
             double sum = 0;
@@ -152,34 +79,31 @@ namespace FuzzyColorHIstogram
             return Math.Pow(sum, 0.5);
         }
 
-        private List<double[]> updateCluster(double[,] matrix_u)
+        private List<CalcBins> updateCluster(double[,] matrix_u)
         {
-            List<double[]> cluster = new List<double[]>(cluster_num);
+            List<CalcBins> cluster = new List<CalcBins>(cluster_num);
 
             for (int c = 0; c < cluster_num; c++)
             {
-                double[] sum_numerator = new double[input_dimension];
-                reset(ref sum_numerator);
+                CalcBins sum_numerator = new CalcBins(input_dimension);
                 for (int x = 0; x < datas.Count; x++)
                 {
-
-                    sum_numerator = plus(sum_numerator, mul(Math.Pow(matrix_u[x, c], weight_exponetM), datas[x]));
+                    sum_numerator = sum_numerator.plus(datas[x].mul(Math.Pow(matrix_u[x, c], weight_exponetM)));
                 }
 
-                double[] sum_denominator = new double[input_dimension];
-                reset(ref sum_denominator);
+                CalcBins sum_denominator = new CalcBins(input_dimension);
                 for (int x = 0; x < datas.Count; x++)
                 {
-                    sum_denominator = plus(sum_denominator, Math.Pow(matrix_u[x, c], weight_exponetM));
+                    sum_denominator = sum_denominator.plus(Math.Pow(matrix_u[x, c], weight_exponetM));
                 }
 
-                cluster.Add(divid(sum_numerator , sum_denominator));
+                cluster.Add(sum_numerator.divid(sum_denominator));
             }
 
             return cluster;
         }
 
-        private double[,] updateMatrix(List<double[]> cluster)
+        private double[,] updateMatrix(List<CalcBins> cluster)
         {
             double[,] matrix_u = new double[datas.Count, cluster_num];
 
@@ -191,8 +115,8 @@ namespace FuzzyColorHIstogram
 
                     for (int k = 0; k < cluster_num; k++)
                     {
-                        double numerator = diffVectorNorm(datas[x], cluster[c]);
-                        double denominiator = diffVectorNorm(datas[x], cluster[k]);
+                        double numerator = datas[x].diff(cluster[c]);
+                        double denominiator = datas[x].diff(cluster[k]);
                         sum += Math.Pow(numerator / denominiator, 2 / (weight_exponetM - 1));
                     }
 
@@ -205,7 +129,7 @@ namespace FuzzyColorHIstogram
 
         private void fcmIter(double[,] preMatrix)
         {
-            List<double[]> curCluster = updateCluster(preMatrix);
+            List<CalcBins> curCluster = updateCluster(preMatrix);
             double[,] curMatrix = updateMatrix(curCluster);
 
             double diff = diffMatrixNorm(preMatrix, curMatrix);

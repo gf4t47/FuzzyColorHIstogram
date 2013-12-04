@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace FuzzyColorHIstogram.Properties
+namespace FCH.Properties
 {
 
 

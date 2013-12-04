@@ -2,7 +2,7 @@
 using System.Text;
 using System.Collections.Generic;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FuzzyColorHIstogram;
+using FCH;
 using Emgu.CV;
 using Emgu.CV.Structure;
 using System.IO;
@@ -65,7 +65,7 @@ namespace FuzzyColorHistogramTest
         [TestMethod]
         public void TestConvertLab()
         {
-            int NO = 6601;
+            int NO = 1;
             string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
             string file = "\\IMG_" + NO + ".jpg";
             string filename = path + file;
@@ -78,6 +78,66 @@ namespace FuzzyColorHistogramTest
             Image<Gray, Byte>[] channel = ret.Split();
 
             ret.Save("Lab.jpg");
+        }
+
+        [TestMethod]
+        public void TestFCH1()
+        {
+            int NO = 1;
+            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            string file = "\\IMG_" + NO + ".jpg";
+            string filename = path + file;
+            Assert.IsTrue(File.Exists(filename));
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+
+            FuzzyColorHistogram fch = new FuzzyColorHistogram();
+            Image<Bgr, Byte> ret = fch.GenerateRGBHistImage(fch.calcFCH(img));
+            ret.Save("testFCH1.jpg");
+        }
+
+        [TestMethod]
+        public void TestFCH2()
+        {
+            int NO = 2;
+            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            string file = "\\IMG_" + NO + ".jpg";
+            string filename = path + file;
+            Assert.IsTrue(File.Exists(filename));
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+
+            FuzzyColorHistogram fch = new FuzzyColorHistogram();
+            Image<Bgr, Byte> ret = fch.GenerateRGBHistImage(fch.calcFCH(img));
+            ret.Save("testFCH2.jpg");
+        }
+
+        [TestMethod]
+        public void TestFCH6703()
+        {
+            int NO = 6703;
+            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            string file = "\\IMG_" + NO + ".jpg";
+            string filename = path + file;
+            Assert.IsTrue(File.Exists(filename));
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+
+            FuzzyColorHistogram fch = new FuzzyColorHistogram();
+            Image<Bgr, Byte> ret = fch.GenerateRGBHistImage(fch.calcFCH(img));
+            ret.Save("testFCH6703.jpg");
+        }
+
+        [TestMethod]
+        public void TestFCH6705()
+        {
+            int NO = 6705;
+            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            string file = "\\IMG_" + NO + ".jpg";
+            string filename = path + file;
+            Assert.IsTrue(File.Exists(filename));
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+
+            FuzzyColorHistogram fch = new FuzzyColorHistogram();
+            Image<Bgr, Byte> ret = fch.GenerateRGBHistImage(fch.calcFCH(img));
+            ret.Save("testFCH6705.jpg");
         }
     }
 }
