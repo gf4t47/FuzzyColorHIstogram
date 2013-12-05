@@ -9,6 +9,27 @@ namespace FCH
 {
     public class FuzzyColorHistogram
     {
+        private int n_;
+        private int n;
+        private double m;
+        private double e;
+
+        public FuzzyColorHistogram()
+        {
+            n_ = 8;
+            n = 4;
+            m = 1.90;
+            e = 0.25;
+        }
+
+        public FuzzyColorHistogram(int n_, int n, double m, double e)
+        {
+            this.n_ = n_;
+            this.n = n;
+            this.m = m;
+            this.e = e;
+        }
+
         public DenseHistogram calcRGB(Image<Bgr, Byte> img, int bins)
         {
             RangeF hRange = new RangeF(0f, 255f);
@@ -93,8 +114,8 @@ namespace FCH
 
         public List<int> calcFCH(Image<Bgr, Byte> img)
         {
-            int cch_bins = 16;
-            int fch_bins = 4;
+            int cch_bins = n_;
+            int fch_bins = n;
             int dimension = 3;
             DenseHistogram cchHist = calcRGB(img, cch_bins);
 
@@ -103,7 +124,7 @@ namespace FCH
 
             int cch_bins_total = (int)Math.Pow(cch_bins, dimension);
             int fch_bins_total = (int)Math.Pow(fch_bins, dimension);
-            FuzzyCMeans fcm = new FuzzyCMeans(lab_bins, 1.95, 0.25, fch_bins_total);
+            FuzzyCMeans fcm = new FuzzyCMeans(lab_bins, m, e, fch_bins_total);
             fcm.runFCM();
             List<CalcBins> cluster = fcm.cluster;
             double[,] matrix = fcm.matrix_u;

@@ -53,10 +53,38 @@ namespace FCH
             return ret.ToBitmap();
         }
 
-        private Bitmap FuzzyCH(string filename)
+        private Bitmap CCH(Bitmap src)
+        {
+            if(src == null)
+            {
+                return null;
+            }
+            
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(src);
+            ColorHistogram ch = new ColorHistogram();
+            Image<Bgr, Byte> ret = ch.saveRGB(img, 4);
+
+            return ret.ToBitmap();
+        }
+
+        private Bitmap FuzzyCH(string filename, int n_, int n, double m, double e)
         {
             Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
-            FuzzyColorHistogram fch = new FuzzyColorHistogram();
+            FuzzyColorHistogram fch = new FuzzyColorHistogram(n_, n, m, e);
+            Image<Bgr, Byte> ret = fch.GenerateRGBHistImage(fch.calcFCH(img));
+
+            return ret.ToBitmap();
+        }
+
+        private Bitmap FuzzyCH(Bitmap src, int n_, int n, double m, double e)
+        {
+            if (src == null)
+            {
+                return null;
+            }
+
+            Image<Bgr, Byte> img = new Image<Bgr, byte>(src);
+            FuzzyColorHistogram fch = new FuzzyColorHistogram(n_, n, m, e);
             Image<Bgr, Byte> ret = fch.GenerateRGBHistImage(fch.calcFCH(img));
 
             return ret.ToBitmap();
@@ -69,18 +97,7 @@ namespace FCH
             {
                 Bitmap src = new Bitmap(filename);
                 showImg((PictureBox)sender, src);
-
-                Bitmap cch = CCH(filename);
-                showImg(pictureBoxCCH1, cch);
-
-                Bitmap fch = FuzzyCH(filename);
-                showImg(pictureBoxFCH1, fch);
             }
-            
-
-                
-     
-
         }
 
         private void pictureBox2_Click(object sender, EventArgs e)
@@ -91,13 +108,41 @@ namespace FCH
             {
                 Bitmap src = new Bitmap(filename);
                 showImg((PictureBox)sender, src);
-
-                Bitmap cch = CCH(filename);
-                showImg(pictureBoxCCH2, cch);
-
-                Bitmap fch = FuzzyCH(filename);
-                showImg(pictureBoxFCH2, fch);
             }
+        }
+
+        private void CalcCCH1_Click(object sender, EventArgs e)
+        {
+            Bitmap cch = CCH((Bitmap)pictureBoxSrc1.Image);
+            showImg(pictureBoxCCH1, cch);
+        }
+
+        private void CalcFCH1_Click(object sender, EventArgs e)
+        {
+            int iN_1 = Convert.ToInt32(n_1.Text);
+            int iN1 = Convert.ToInt32(n1.Text);
+            double dM1 = Convert.ToDouble(m1.Text);
+            double dE1 = Convert.ToDouble(e1.Text);
+
+            Bitmap fch = FuzzyCH((Bitmap)pictureBoxSrc1.Image, iN_1, iN1, dM1, dE1);
+            showImg(pictureBoxFCH1, fch);
+        }
+
+        private void CalcCCH2_Click(object sender, EventArgs e)
+        {
+            Bitmap cch = CCH((Bitmap)pictureBoxSrc2.Image);
+            showImg(pictureBoxCCH2, cch);
+        }
+
+        private void CalcFCH2_Click(object sender, EventArgs e)
+        {
+            int iN_2 = Convert.ToInt32(n_2.Text);
+            int iN2 = Convert.ToInt32(n2.Text);
+            double dM2 = Convert.ToDouble(m2.Text);
+            double dE2 = Convert.ToDouble(e2.Text);
+
+            Bitmap fch = FuzzyCH((Bitmap)pictureBoxSrc2.Image, iN_2, iN2, dM2, dE2);
+            showImg(pictureBoxFCH2, fch);
         }
     }
 }
