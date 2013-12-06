@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace FCH
+namespace FuzzyColorHIstogram.FCH
 {
     public class Range<T> where T : IComparable<T>
     {
@@ -49,21 +45,21 @@ namespace FCH
         /// <summary>
         /// Determines if this Range is inside the bounds of another range
         /// </summary>
-        /// <param name="Range">The parent range to test on</param>
+        /// <param name="range">The parent range to test on</param>
         /// <returns>True if range is inclusive, else false</returns>
-        public Boolean IsInsideRange(Range<T> Range)
+        public Boolean IsInsideRange(Range<T> range)
         {
-            return this.IsValid() && Range.IsValid() && Range.ContainsValue(this.Minimum) && Range.ContainsValue(this.Maximum);
+            return IsValid() && range.IsValid() && range.ContainsValue(Minimum) && range.ContainsValue(Maximum);
         }
 
         /// <summary>
         /// Determines if another range is inside the bounds of this range
         /// </summary>
-        /// <param name="Range">The child range to test</param>
+        /// <param name="range">The child range to test</param>
         /// <returns>True if range is inside, else false</returns>
-        public Boolean ContainsRange(Range<T> Range)
+        public Boolean ContainsRange(Range<T> range)
         {
-            return this.IsValid() && Range.IsValid() && this.ContainsValue(Range.Minimum) && this.ContainsValue(Range.Maximum);
+            return IsValid() && range.IsValid() && ContainsValue(range.Minimum) && ContainsValue(range.Maximum);
         }
     }
 }

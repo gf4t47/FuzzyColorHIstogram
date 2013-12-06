@@ -1,8 +1,7 @@
 ﻿using System;
-using System.Text;
 using System.Collections.Generic;
+using FuzzyColorHIstogram.FCH;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using FCH;
 
 namespace FuzzyColorHistogramTest
 {
@@ -12,31 +11,6 @@ namespace FuzzyColorHistogramTest
     [TestClass]
     public class FcmTest
     {
-        public FcmTest()
-        {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
-
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
         #region Additional test attributes
         //
         // You can use the following additional attributes as you write your tests:
@@ -62,15 +36,15 @@ namespace FuzzyColorHistogramTest
         [TestMethod]
         public void TestFcmColorBins()
         {
-            int bins = 16;
-            int tick = 256 / 16;
-            int dimension = 3;
+            const int bins = 16;
+            const int tick = 256 / 16;
+            const int dimension = 3;
 
-            List<ColorBins> datas = new List<ColorBins>(bins);
-            for (int i = 0; i < bins; i++)
+            var datas = new List<ColorBins>(bins);
+            for (var i = 0; i < bins; i++)
             {
-                List<Range<Byte>> ranges = new List<Range<Byte>>(dimension);
-                for (int j = 0; j < 3; j++)
+                var ranges = new List<Range<Byte>>(dimension);
+                for (var j = 0; j < 3; j++)
                 {
                     ranges.Add(new Range<Byte>((Byte)(i * tick), (Byte)((i + 1) * tick - 1)));
                 }
@@ -78,12 +52,12 @@ namespace FuzzyColorHistogramTest
                 datas.Add(new ColorBins(ranges));
             }
 
-            FuzzyCMeans fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
+            var fcm = new FuzzyCMeans(datas, 1.8, 0.25, 3);
 
-            fcm.runFCM();
+            fcm.RunFCM();
 
-            List<CalcBins> cluster = fcm.cluster;
-            double[,] matrix = fcm.matrix_u;
+            var cluster = fcm.Cluster;
+            var matrix = fcm.MatrixU;
 
             Assert.AreEqual(3, cluster.Count);
             Assert.AreEqual(datas.Count, matrix.Length / cluster.Count);

@@ -1,32 +1,30 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FCH;
 
-namespace FCH
+namespace FuzzyColorHIstogram.FCH
 {
     public class CalcBins
     {
         public CalcBins(List<Range<double>> cs)
         {
-            colors = cs;
+            Colors = cs;
         }
 
         public CalcBins(int count)
         {
-            colors = new List<Range<double>>();
+            Colors = new List<Range<double>>();
             for (int i = 0; i < count; i++)
             {
-                colors.Add(new Range<double>(0, 0));
+                Colors.Add(new Range<double>(0, 0));
             }
         }
 
-        public List<Range<double>> colors { get; set; }
+        public List<Range<double>> Colors { get; private set; }
 
         public int Count
         {
-            get { return colors.Count; }
+            get { return Colors.Count; }
         }
 
         //public CalcBins mul(double fac)
@@ -40,39 +38,34 @@ namespace FCH
         //    return new CalcBins(ranges);
         //}
 
-        public CalcBins plus(CalcBins other)
+        public CalcBins Plus(CalcBins other)
         {
             int num = Count < other.Count ? Count : other.Count;
 
-            List<Range<double>> ranges = new List<Range<double>>();
+            var ranges = new List<Range<double>>();
             for (int i = 0; i < num; i++)
             {
-                ranges.Add(new Range<double>(colors[i].Minimum + other.colors[i].Minimum, colors[i].Maximum + other.colors[i].Maximum));
+                ranges.Add(new Range<double>(Colors[i].Minimum + other.Colors[i].Minimum, Colors[i].Maximum + other.Colors[i].Maximum));
             }
 
             return new CalcBins(ranges);
         }
 
-        public CalcBins plus(double p)
+        public CalcBins Plus(double p)
         {
-            List<Range<double>> ranges = new List<Range<double>>();
-
-            foreach (Range<double> c in colors)
-            {
-                ranges.Add(new Range<double>(c.Minimum + p, c.Maximum + p));
-            }
+            var ranges = Colors.Select(c => new Range<double>(c.Minimum + p, c.Maximum + p)).ToList();
 
             return new CalcBins(ranges);
         }
 
-        public CalcBins divid(CalcBins other)
+        public CalcBins Divid(CalcBins other)
         {
-            int num = Count < other.Count ? Count : other.Count;
+            var num = Count < other.Count ? Count : other.Count;
 
-            List<Range<double>> ranges = new List<Range<double>>();
-            for (int i = 0; i < num; i++)
+            var ranges = new List<Range<double>>();
+            for (var i = 0; i < num; i++)
             {
-                ranges.Add(new Range<double>(colors[i].Minimum / other.colors[i].Minimum, colors[i].Maximum / other.colors[i].Maximum));
+                ranges.Add(new Range<double>(Colors[i].Minimum / other.Colors[i].Minimum, Colors[i].Maximum / other.Colors[i].Maximum));
             }
 
             return new CalcBins(ranges);

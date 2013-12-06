@@ -1,41 +1,27 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using FCH;
 
-namespace FCH
+namespace FuzzyColorHIstogram.FCH
 {
     public class ColorBins
     {
-        public ColorBins(List<Range<Byte>> cs)
+        public ColorBins(List<Range<byte>> cs)
         {
-            colors = cs;
+            Colors = cs;
         }
 
-        public ColorBins(int count)
-        {
-            colors = new List<Range<Byte>>();
-            for (int i = 0; i < count; i++)
-            {
-                colors.Add(new Range<Byte>(0, 0));
-            }
-        }
-
-        public List<Range<Byte>> colors { get; set; }
+        public List<Range<Byte>> Colors { get; private set; }
 
         public int Count
         {
-            get { return colors.Count; }
+            get { return Colors.Count; }
         }
 
-        public CalcBins mul(double fac)
+        public CalcBins Mul(double fac)
         {
-            List<Range<double>> ranges = new List<Range<double>>();
-            foreach (Range<Byte> c in colors)
-            {
-                ranges.Add(new Range<double>(c.Minimum * fac, c.Maximum * fac));
-            }
+            var ranges = Colors.Select(c => new Range<double>(c.Minimum*fac, c.Maximum*fac)).ToList();
 
             return new CalcBins(ranges);
         }
@@ -78,14 +64,14 @@ namespace FCH
         //    return new ColorBins(ranges);
         //}
 
-        public double diff(CalcBins other)
+        public double Diff(CalcBins other)
         {
             int num = Count < other.Count ? Count : other.Count;
 
             double sum = 0;
             for (int i = 0; i < num; i++)
             {
-                sum += Math.Pow(colors[i].Minimum - other.colors[i].Minimum, 2) + Math.Pow(colors[i].Maximum - other.colors[i].Maximum, 2);
+                sum += Math.Pow(Colors[i].Minimum - other.Colors[i].Minimum, 2) + Math.Pow(Colors[i].Maximum - other.Colors[i].Maximum, 2);
             }
 
             return Math.Pow(sum, 0.5);

@@ -1,4 +1,7 @@
-﻿namespace FCH
+﻿using System.Drawing;
+using System.Windows.Forms;
+
+namespace FuzzyColorHIstogram
 {
     partial class HistogramForm
     {
@@ -432,6 +435,12 @@
         private System.Windows.Forms.TextBox n_2;
         private System.Windows.Forms.Label label13;
         private System.Windows.Forms.Label label14;
+
+        private void showImg(PictureBox p, Bitmap img)
+        {
+            p.SizeMode = PictureBoxSizeMode.Zoom;
+            p.Image = img;
+        }
     }
 }
 

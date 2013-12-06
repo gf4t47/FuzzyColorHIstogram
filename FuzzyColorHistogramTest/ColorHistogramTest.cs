@@ -1,8 +1,7 @@
 ﻿using Emgu.CV;
 using Emgu.CV.Structure;
-using FCH;
+using FuzzyColorHIstogram.FCH;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using System.IO;
 
 namespace FuzzyColorHistogramTest
@@ -13,31 +12,6 @@ namespace FuzzyColorHistogramTest
     [TestClass]
     public class ColorHistogramTest
     {
-        public ColorHistogramTest()
-        {
-            //
-            // TODO: Add constructor logic here
-            //
-        }
-
-        private TestContext testContextInstance;
-
-        /// <summary>
-        ///Gets or sets the test context which provides
-        ///information about and functionality for the current test run.
-        ///</summary>
-        public TestContext TestContext
-        {
-            get
-            {
-                return testContextInstance;
-            }
-            set
-            {
-                testContextInstance = value;
-            }
-        }
-
         #region Additional test attributes
         //
         // You can use the following additional attributes as you write your tests:
@@ -63,60 +37,60 @@ namespace FuzzyColorHistogramTest
         [TestMethod]
         public void TestColorHistogram1()
         {
-            int NO = 1;
-            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
-            string file = "\\IMG_" + NO + ".jpg";
-            string filename = path + file;
+            const int no = 1;
+            const string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            var file = "\\IMG_" + no + ".jpg";
+            var filename = path + file;
             Assert.IsTrue(File.Exists(filename));
-            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+            var img = new Image<Bgr, byte>(filename);
 
-            ColorHistogram ch = new ColorHistogram();
-            Image<Bgr, Byte> ret = ch.saveRGB(img, 4);
+            var ch = new ColorHistogram();
+            var ret = ch.SaveRGB(img, 4);
             ret.Save("testImg1.jpg");
         }
 
         [TestMethod]
         public void TestColorHistogram2()
         {
-            int NO = 2;
-            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
-            string file = "\\IMG_" + NO + ".jpg";
-            string filename = path + file;
+            const int no = 2;
+            const string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            var file = "\\IMG_" + no + ".jpg";
+            var filename = path + file;
             Assert.IsTrue(File.Exists(filename));
-            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+            var img = new Image<Bgr, byte>(filename);
 
-            ColorHistogram ch = new ColorHistogram();
-            Image<Bgr, Byte> ret = ch.saveRGB(img, 4);
+            var ch = new ColorHistogram();
+            var ret = ch.SaveRGB(img, 4);
             ret.Save("testImg2.jpg");
         }
 
         [TestMethod]
         public void TestColorHistogram6703()
         {
-            int NO = 6703;
-            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
-            string file = "\\IMG_" + NO + ".jpg";
-            string filename = path + file;
+            const int no = 6703;
+            const string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            var file = "\\IMG_" + no + ".jpg";
+            var filename = path + file;
             Assert.IsTrue(File.Exists(filename));
-            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+            var img = new Image<Bgr, byte>(filename);
 
-            ColorHistogram ch = new ColorHistogram();
-            Image<Bgr, Byte> ret = ch.saveRGB(img, 4);
+            var ch = new ColorHistogram();
+            var ret = ch.SaveRGB(img, 4);
             ret.Save("testImg6703.jpg");
         }
 
         [TestMethod]
         public void TestColorHistogram6705()
         {
-            int NO = 6705;
-            string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
-            string file = "\\IMG_" + NO + ".jpg";
-            string filename = path + file;
+            const int no = 6705;
+            const string path = "C:\\Users\\Ding\\SkyDrive\\Program\\ImageProcess\\Project\\FuzzyColorHIstogram\\FuzzyColorHistogramTest\\img";
+            var file = "\\IMG_" + no + ".jpg";
+            var filename = path + file;
             Assert.IsTrue(File.Exists(filename));
-            Image<Bgr, Byte> img = new Image<Bgr, byte>(filename);
+            var img = new Image<Bgr, byte>(filename);
 
-            ColorHistogram ch = new ColorHistogram();
-            Image<Bgr, Byte> ret = ch.saveRGB(img, 4);
+            var ch = new ColorHistogram();
+            var ret = ch.SaveRGB(img, 4);
             ret.Save("testImg6705.jpg");
         }
     }
